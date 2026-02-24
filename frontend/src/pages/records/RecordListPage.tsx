@@ -1,145 +1,161 @@
-import { Header } from '@/components/layout/Header'
+import { PageTitle } from '@/components/layout/PageTitle'
 import { StatusBadge } from '@/components/ui/StatusBadge'
-import { FadeIn } from '@/components/ui/Animations'
-import { MOCK_RECORDS, MOCK_FILTER_OPTIONS } from '@/mocks/data'
-import { formatDateTime, formatPhone } from '@/utils/formatters'
+import { Button } from '@/components/ui/Button'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { MOCK_RECORDS } from '@/mocks/data'
+import { formatDateTime } from '@/utils/formatters'
 import { useState } from 'react'
-import { Search, Filter, ChevronDown } from 'lucide-react'
+import { Filter, Plus } from 'lucide-react'
+import { GlobalFilters } from '@/components/filters/GlobalFilters'
+import { useFilters } from '@/hooks/useFilters'
+import { AnimatePresence, motion } from 'framer-motion'
+import { SlidePanel } from '@/components/ui/SlidePanel'
+import { RecordDetailPage } from '@/pages/records/RecordDetailPage'
 
 export function RecordListPage() {
-    const [search, setSearch] = useState('')
     const [showFilters, setShowFilters] = useState(true)
-    const [filterClinica, setFilterClinica] = useState('')
-    const [filterAcao, setFilterAcao] = useState('')
+    const [isPanelOpen, setIsPanelOpen] = useState(false)
+    const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null)
+    const { clinica, acao, search, dataInicio, dataFim } = useFilters()
 
     const filtered = MOCK_RECORDS.filter((r) => {
         const matchSearch =
             !search ||
             r.nome_paciente?.toLowerCase().includes(search.toLowerCase()) ||
             r.detalhes?.toLowerCase().includes(search.toLowerCase())
-        const matchClinica = !filterClinica || r.clinica === filterClinica
-        const matchAcao = !filterAcao || r.acao === filterAcao
-        return matchSearch && matchClinica && matchAcao
+
+        const matchClinica = !clinica || r.clinica === clinica
+        const matchAcao = !acao || r.acao === acao
+
+        // Date filtering (simplistic string comparison for mock data)
+        const recordDate = new Date(r.created_at).getTime()
+        const matchDataInicio = !dataInicio || recordDate >= new Date(dataInicio).getTime()
+        const matchDataFim = !dataFim || recordDate <= new Date(dataFim + 'T23:59:59').getTime()
+
+        return matchSearch && matchClinica && matchAcao && matchDataInicio && matchDataFim
     })
 
-    const inputStyle = {
-        background: 'var(--surface-raised)',
-        borderColor: 'var(--border-default)',
-        color: 'var(--text-primary)',
-    }
-
     return (
-        <>
-            <Header title="Registros" subtitle="Consulta de registros existentes" />
-
+        <div className="w-full animation-fade-in relative z-10 mt-8">
             <div className="p-6 space-y-4">
-                {/* Filter bar */}
-                <FadeIn>
-                    <div
-                        className="rounded-xl border p-4"
-                        style={{ background: 'var(--surface-primary)', borderColor: 'var(--border-default)' }}
-                    >
-                        <div className="flex items-center justify-between mb-3">
-                            <button
-                                onClick={() => setShowFilters(!showFilters)}
-                                className="btn-press flex items-center gap-2 text-sm font-medium"
-                                style={{ color: 'var(--text-secondary)' }}
-                            >
-                                <Filter size={16} className="text-roxo-400" />
-                                Filtros
-                                <ChevronDown
-                                    size={14}
-                                    className={`transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}
-                                    style={{ color: 'var(--text-muted)' }}
-                                />
-                            </button>
-                            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{filtered.length} registros</span>
-                        </div>
+                <PageTitle
+                    title="Atendimentos"
+                    subtitle="Histórico de interações registradas."
+                />
 
-                        {showFilters && (
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div className="relative">
-                                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar paciente..."
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        className="w-full rounded-lg border py-2 pl-9 pr-4 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                        style={inputStyle}
-                                    />
-                                </div>
-                                <select
-                                    value={filterClinica}
-                                    onChange={(e) => setFilterClinica(e.target.value)}
-                                    className="rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500"
-                                    style={inputStyle}
-                                >
-                                    <option value="">Todas as clínicas</option>
-                                    {MOCK_FILTER_OPTIONS.clinicas.map((c) => (
-                                        <option key={c} value={c}>{c}</option>
-                                    ))}
-                                </select>
-                                <select
-                                    value={filterAcao}
-                                    onChange={(e) => setFilterAcao(e.target.value)}
-                                    className="rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500"
-                                    style={inputStyle}
-                                >
-                                    <option value="">Todas as ações</option>
-                                    {MOCK_FILTER_OPTIONS.acoes.map((a) => (
-                                        <option key={a} value={a}>{a}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        )}
-                    </div>
-                </FadeIn>
-
-                {/* Table */}
-                <FadeIn delayMs={200}>
-                    <div
-                        className="overflow-hidden rounded-xl border"
-                        style={{ background: 'var(--surface-primary)', borderColor: 'var(--border-default)' }}
+                <div className="flex items-center justify-between">
+                    <Button
+                        variant="ghost"
+                        onClick={() => setShowFilters(!showFilters)}
+                        leftIcon={<Filter size={16} />}
+                        className={showFilters ? 'bg-coral-500/10 text-coral-400' : ''}
                     >
+                        Filtros
+                    </Button>
+
+                    <Button
+                        onClick={() => {
+                            setSelectedRecordId(null)
+                            setIsPanelOpen(true)
+                        }}
+                        leftIcon={<Plus size={16} />}
+                    >
+                        Novo Atendimento
+                    </Button>
+                </div>
+
+                <AnimatePresence>
+                    {showFilters && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                        >
+                            <GlobalFilters />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <div
+                    className="rounded-xl border shadow-sm overflow-hidden"
+                    style={{ background: 'var(--surface-primary)', borderColor: 'var(--border-default)' }}
+                >
+                    {filtered.length > 0 ? (
                         <table className="w-full text-sm">
                             <thead>
                                 <tr
                                     className="text-left text-xs font-medium uppercase tracking-wider"
                                     style={{ color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}
                                 >
-                                    <th className="px-5 py-3">#</th>
-                                    <th className="px-5 py-3">Paciente</th>
-                                    <th className="px-5 py-3">Telefone</th>
-                                    <th className="px-5 py-3">Clínica</th>
-                                    <th className="px-5 py-3">Ação</th>
-                                    <th className="px-5 py-3">Status</th>
-                                    <th className="px-5 py-3">Detalhes</th>
-                                    <th className="px-5 py-3">Data</th>
+                                    <th className="px-6 py-3">ID</th>
+                                    <th className="px-6 py-3">Data</th>
+                                    <th className="px-6 py-3">Clínica</th>
+                                    <th className="px-6 py-3">Paciente</th>
+                                    <th className="px-6 py-3">Ação</th>
+                                    <th className="px-6 py-3">Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {filtered.map((r) => (
+                            <tbody className="divide-y divide-[var(--border-subtle)]">
+                                {filtered.map((record) => (
                                     <tr
-                                        key={r.id}
-                                        className="row-active cursor-pointer"
-                                        style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                                        key={record.id}
+                                        onClick={() => {
+                                            setSelectedRecordId(String(record.id))
+                                            setIsPanelOpen(true)
+                                        }}
+                                        className="transition-colors hover:bg-[var(--surface-raised)] cursor-pointer group"
                                     >
-                                        <td className="px-5 py-3 font-mono text-xs" style={{ color: 'var(--text-faint)' }}>{r.id}</td>
-                                        <td className="px-5 py-3 font-medium" style={{ color: 'var(--text-primary)' }}>{r.nome_paciente}</td>
-                                        <td className="px-5 py-3 font-mono text-xs" style={{ color: 'var(--text-faint)' }}>{formatPhone(r.telefone_paciente)}</td>
-                                        <td className="px-5 py-3" style={{ color: 'var(--text-muted)' }}>{r.clinica}</td>
-                                        <td className="px-5 py-3" style={{ color: 'var(--text-muted)' }}>{r.acao}</td>
-                                        <td className="px-5 py-3"><StatusBadge status={r.sttus} /></td>
-                                        <td className="px-5 py-3 text-xs max-w-[200px] truncate" style={{ color: 'var(--text-faint)' }}>{r.detalhes}</td>
-                                        <td className="px-5 py-3 text-xs whitespace-nowrap" style={{ color: 'var(--text-faint)' }}>{formatDateTime(r.created_at)}</td>
+                                        <td className="px-6 py-4 font-mono text-xs text-[var(--text-faint)]">
+                                            #{record.id}
+                                        </td>
+                                        <td className="px-6 py-4 text-[var(--text-secondary)]">
+                                            {formatDateTime(record.created_at)}
+                                        </td>
+                                        <td className="px-6 py-4 font-medium text-[var(--text-primary)]">
+                                            {record.clinica}
+                                        </td>
+                                        <td className="px-6 py-4 text-[var(--text-secondary)]">
+                                            {record.nome_paciente}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="inline-flex items-center rounded-md bg-[var(--surface-raised)] px-2 py-1 text-xs font-medium text-[var(--text-secondary)] border border-[var(--border-default)]">
+                                                {record.acao}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <StatusBadge status={record.status} />
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-                    </div>
-                </FadeIn>
+                    ) : (
+                        <EmptyState
+                            title="Nenhum registro encontrado"
+                            description="Tente ajustar os filtros para encontrar o que você procura."
+                            action={
+                                <Button variant="outline" size="sm" onClick={() => setShowFilters(true)}>
+                                    Ajustar Filtros
+                                </Button>
+                            }
+                        />
+                    )}
+                </div>
             </div>
-        </>
+
+            {/* Slide Panel for Records */}
+            <SlidePanel
+                isOpen={isPanelOpen}
+                onClose={() => setIsPanelOpen(false)}
+                title={selectedRecordId ? 'Detalhes do Atendimento' : 'Novo Atendimento'}
+                width="xl"
+            >
+                <RecordDetailPage
+                    recordId={selectedRecordId}
+                    asPanel
+                />
+            </SlidePanel>
+        </div>
     )
 }

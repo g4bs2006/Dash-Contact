@@ -105,18 +105,18 @@ export const MOCK_CLIENTS: Client[] = [
 
 // ── Records (tabela registros do Supabase) ──
 export const MOCK_RECORDS: Record[] = [
-    { id: 1, created_at: '2026-02-13T09:15:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Agendamento', sttus: 'Concluído', nome_paciente: 'Maria Oliveira', telefone_paciente: '11999001122', detalhes: 'Consulta cardiologia' },
-    { id: 2, created_at: '2026-02-13T08:45:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Filial - Zona Sul', acao: 'Confirmação', sttus: 'Confirmado', nome_paciente: 'José Santos', telefone_paciente: '11988112233', detalhes: 'Retorno dermatologia' },
-    { id: 3, created_at: '2026-02-12T16:30:00Z', clinica: 'OdontoVita', unidade: 'Sede', acao: 'Cancelamento', sttus: 'Cancelado', nome_paciente: 'Ana Paula Reis', telefone_paciente: '21977334455', detalhes: 'Paciente remarcou' },
-    { id: 4, created_at: '2026-02-12T14:00:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Agendamento', sttus: 'Pendente', nome_paciente: 'Roberto Costa', telefone_paciente: '11966778899', detalhes: 'Exame laboratório' },
-    { id: 5, created_at: '2026-02-12T11:20:00Z', clinica: 'Clínica Renovar', unidade: 'Centro Médico', acao: 'Lembrete', sttus: 'Enviado', nome_paciente: 'Fernanda Lima', telefone_paciente: '41955112233', detalhes: 'Lembrete 24h pré-consulta' },
-    { id: 6, created_at: '2026-02-11T17:45:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Agendamento', sttus: 'Concluído', nome_paciente: 'Lucas Pereira', telefone_paciente: '11944556677', detalhes: 'Ortopedista' },
-    { id: 7, created_at: '2026-02-11T10:00:00Z', clinica: 'OdontoVita', unidade: 'Sede', acao: 'Confirmação', sttus: 'Confirmado', nome_paciente: 'Camila Rocha', telefone_paciente: '21933445566', detalhes: 'Limpeza dental' },
-    { id: 8, created_at: '2026-02-10T15:30:00Z', clinica: 'Bem Estar Clínicas', unidade: 'Unidade Norte', acao: 'Agendamento', sttus: 'Concluído', nome_paciente: 'André Martins', telefone_paciente: '31922334455', detalhes: 'Clínico geral' },
-    { id: 9, created_at: '2026-02-10T09:00:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Filial - Zona Sul', acao: 'Lembrete', sttus: 'Enviado', nome_paciente: 'Patricia Alves', telefone_paciente: '11911223344', detalhes: 'Lembrete vacina' },
-    { id: 10, created_at: '2026-02-09T13:00:00Z', clinica: 'Clínica Renovar', unidade: 'Centro Médico', acao: 'Cancelamento', sttus: 'Cancelado', nome_paciente: 'Bruno Ferreira', telefone_paciente: '41900112233', detalhes: 'Paciente viajou' },
-    { id: 11, created_at: '2026-02-08T11:15:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Confirmação', sttus: 'Confirmado', nome_paciente: 'Juliana Cardoso', telefone_paciente: '11999887711', detalhes: 'Pediatria' },
-    { id: 12, created_at: '2026-02-07T08:30:00Z', clinica: 'OdontoVita', unidade: 'Sede', acao: 'Agendamento', sttus: 'Concluído', nome_paciente: 'Ricardo Nascimento', telefone_paciente: '21988776622', detalhes: 'Implante' },
+    { id: 1, created_at: '2026-02-13T09:15:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Agendamento', status: 'Concluído', nome_paciente: 'Maria Oliveira', telefone_paciente: '11999001122', detalhes: 'Consulta cardiologia' },
+    { id: 2, created_at: '2026-02-13T08:45:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Filial - Zona Sul', acao: 'Confirmação', status: 'Confirmado', nome_paciente: 'José Santos', telefone_paciente: '11988112233', detalhes: 'Retorno dermatologia' },
+    { id: 3, created_at: '2026-02-12T16:30:00Z', clinica: 'OdontoVita', unidade: 'Sede', acao: 'Cancelamento', status: 'Cancelado', nome_paciente: 'Ana Paula Reis', telefone_paciente: '21977334455', detalhes: 'Paciente remarcou' },
+    { id: 4, created_at: '2026-02-12T14:00:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Agendamento', status: 'Pendente', nome_paciente: 'Roberto Costa', telefone_paciente: '11966778899', detalhes: 'Exame laboratório' },
+    { id: 5, created_at: '2026-02-12T11:20:00Z', clinica: 'Clínica Renovar', unidade: 'Centro Médico', acao: 'Lembrete', status: 'Enviado', nome_paciente: 'Fernanda Lima', telefone_paciente: '41955112233', detalhes: 'Lembrete 24h pré-consulta' },
+    { id: 6, created_at: '2026-02-11T17:45:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Agendamento', status: 'Concluído', nome_paciente: 'Lucas Pereira', telefone_paciente: '11944556677', detalhes: 'Ortopedista' },
+    { id: 7, created_at: '2026-02-11T10:00:00Z', clinica: 'OdontoVita', unidade: 'Sede', acao: 'Confirmação', status: 'Confirmado', nome_paciente: 'Camila Rocha', telefone_paciente: '21933445566', detalhes: 'Limpeza dental' },
+    { id: 8, created_at: '2026-02-10T15:30:00Z', clinica: 'Bem Estar Clínicas', unidade: 'Unidade Norte', acao: 'Agendamento', status: 'Concluído', nome_paciente: 'André Martins', telefone_paciente: '31922334455', detalhes: 'Clínico geral' },
+    { id: 9, created_at: '2026-02-10T09:00:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Filial - Zona Sul', acao: 'Lembrete', status: 'Enviado', nome_paciente: 'Patricia Alves', telefone_paciente: '11911223344', detalhes: 'Lembrete vacina' },
+    { id: 10, created_at: '2026-02-09T13:00:00Z', clinica: 'Clínica Renovar', unidade: 'Centro Médico', acao: 'Cancelamento', status: 'Cancelado', nome_paciente: 'Bruno Ferreira', telefone_paciente: '41900112233', detalhes: 'Paciente viajou' },
+    { id: 11, created_at: '2026-02-08T11:15:00Z', clinica: 'Clínica Saúde Plena', unidade: 'Matriz - Centro', acao: 'Confirmação', status: 'Confirmado', nome_paciente: 'Juliana Cardoso', telefone_paciente: '11999887711', detalhes: 'Pediatria' },
+    { id: 12, created_at: '2026-02-07T08:30:00Z', clinica: 'OdontoVita', unidade: 'Sede', acao: 'Agendamento', status: 'Concluído', nome_paciente: 'Ricardo Nascimento', telefone_paciente: '21988776622', detalhes: 'Implante' },
 ]
 
 // ── Filter Options ──

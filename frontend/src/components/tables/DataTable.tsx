@@ -59,7 +59,7 @@ export function DataTable<T>({
 
     if (!data.length) {
         return (
-            <div className="rounded-xl border border-dashed" style={{ borderColor: 'var(--border-default)', background: 'var(--surface-raised)' }}>
+            <div className="rounded-xl border border-dashed p-8" style={{ borderColor: 'var(--border-default)', background: 'var(--surface-overlay)' }}>
                 <EmptyState title={emptyMessage} />
             </div>
         )
@@ -67,10 +67,10 @@ export function DataTable<T>({
 
     return (
         <div className="space-y-4">
-            <div className="overflow-hidden rounded-xl border" style={{ borderColor: 'var(--border-default)', background: 'var(--surface-primary)' }}>
+            <div className="overflow-hidden rounded-xl border border-border-default shadow-card" style={{ background: 'var(--surface-primary)' }}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
-                        <thead style={{ background: 'var(--surface-raised)', borderBottom: '1px solid var(--border-default)' }}>
+                        <thead style={{ background: 'var(--surface-overlay)', borderBottom: '1px solid var(--border-default)' }}>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => (
@@ -80,7 +80,7 @@ export function DataTable<T>({
                                             style={{ color: 'var(--text-muted)' }}
                                             onClick={header.column.getToggleSortingHandler()}
                                         >
-                                            <div className={`flex items-center gap-2 ${header.column.getCanSort() ? 'cursor-pointer hover:text-roxo-400' : ''}`}>
+                                            <div className={`flex items-center gap-2 ${header.column.getCanSort() ? 'cursor-pointer hover:text-metal-400' : ''}`}>
                                                 {flexRender(header.column.columnDef.header, header.getContext())}
                                                 {header.column.getCanSort() && (
                                                     <ArrowUpDown size={14} className="opacity-50" />
@@ -91,12 +91,12 @@ export function DataTable<T>({
                                 </tr>
                             ))}
                         </thead>
-                        <tbody className="divide-y" style={{ divideColor: 'var(--border-subtle)' }}>
+                        <tbody className="divide-y divide-border-subtle">
                             {table.getRowModel().rows.map((row) => (
                                 <tr
                                     key={row.id}
                                     onClick={() => onRowClick?.(row.original)}
-                                    className={`transition-colors ${onRowClick ? 'cursor-pointer hover:bg-roxo-500/5' : ''}`}
+                                    className={`transition-all duration-200 ${onRowClick ? 'cursor-pointer hover:bg-metal-500/10 hover:shadow-[inset_2px_0_0_var(--color-metal-400)]' : ''}`}
                                     style={{ borderBottom: '1px solid var(--border-subtle)' }}
                                 >
                                     {row.getVisibleCells().map((cell) => (

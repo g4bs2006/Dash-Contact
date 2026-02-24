@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     LayoutDashboard, Database, BarChart3, Building2, Users, Shield,
-    Sun, Moon, Search,
+    Search,
 } from 'lucide-react'
-import { useTheme } from '@/hooks/useTheme'
 import { useAuth } from '@/hooks/useAuth'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -21,7 +20,6 @@ const NAV_ITEMS = [
 export function CommandPalette() {
     const [open, setOpen] = useState(false)
     const navigate = useNavigate()
-    const { toggle, theme } = useTheme()
     const { isAdmin } = useAuth()
 
     useEffect(() => {
@@ -91,25 +89,13 @@ export function CommandPalette() {
                                             key={item.path}
                                             value={item.label}
                                             onSelect={() => goTo(item.path)}
-                                            className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors data-[selected=true]:bg-roxo-600/15"
+                                            className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors data-[selected=true]:bg-metal-500/15 data-[selected=true]:text-white data-[selected=true]:shadow-neon"
                                             style={{ color: 'var(--text-secondary)' }}
                                         >
-                                            <item.icon size={16} className="text-roxo-400" />
+                                            <item.icon size={16} className="text-metal-400" />
                                             {item.label}
                                         </Command.Item>
                                     ))}
-                                </Command.Group>
-
-                                <Command.Group heading="Ações" className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>
-                                    <Command.Item
-                                        value="Alternar tema"
-                                        onSelect={() => { toggle(); setOpen(false) }}
-                                        className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors data-[selected=true]:bg-roxo-600/15"
-                                        style={{ color: 'var(--text-secondary)' }}
-                                    >
-                                        {theme === 'dark' ? <Sun size={16} className="text-warning-400" /> : <Moon size={16} className="text-roxo-400" />}
-                                        {theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-                                    </Command.Item>
                                 </Command.Group>
                             </Command.List>
                         </Command>

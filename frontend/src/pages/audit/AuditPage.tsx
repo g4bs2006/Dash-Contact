@@ -1,9 +1,12 @@
-import { Header } from '@/components/layout/Header'
+import { PageTitle } from '@/components/layout/PageTitle'
 import { DataTable } from '@/components/tables/DataTable'
 import { FadeIn } from '@/components/ui/Animations'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Filter, Search } from 'lucide-react'
 import { useState } from 'react'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { PageTransition } from '@/components/ui/PageTransition'
 
 interface AuditLog {
     id: string
@@ -33,7 +36,7 @@ export function AuditPage() {
     const columns = [
         columnHelper.accessor('created_at', {
             header: 'Data/Hora',
-            cell: (info) => <span className="font-mono text-xs" style={{ color: 'var(--text-faint)' }}>{info.getValue()}</span>,
+            cell: (info) => <span className="font-mono text-xs" style={{ color: 'var(--text-faint)' }}>{String(info.getValue())}</span>,
         }),
         columnHelper.accessor('user_name', {
             header: 'Usuário',
@@ -44,8 +47,8 @@ export function AuditPage() {
             cell: (info) => (
                 <span
                     className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${info.getValue() === 'Delete' ? 'bg-danger-500/10 text-danger-400' :
-                            info.getValue() === 'Create' ? 'bg-success-500/10 text-success-400' :
-                                'bg-roxo-500/10 text-roxo-400'
+                        info.getValue() === 'Create' ? 'bg-success-500/10 text-success-400' :
+                            'bg-metal-500/10 text-metal-400'
                         }`}
                 >
                     {info.getValue()}
@@ -70,8 +73,11 @@ export function AuditPage() {
     )
 
     return (
-        <>
-            <Header title="Auditoria" subtitle="Registro de atividades do sistema" />
+        <PageTransition>
+            <PageTitle
+                title="Auditoria"
+                subtitle="Registro de atividades do sistema"
+            />
 
             <div className="p-6">
                 <FadeIn>
@@ -80,41 +86,33 @@ export function AuditPage() {
                         style={{ background: 'var(--surface-primary)', borderColor: 'var(--border-default)' }}
                     >
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-                            <div className="relative w-full sm:w-64">
-                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
-                                <input
-                                    type="text"
+                            <div className="relative w-full sm:max-w-xs">
+                                <Input
                                     placeholder="Buscar logs..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    className="w-full rounded-lg border py-2 pl-9 pr-4 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                    style={{
-                                        background: 'var(--surface-raised)',
-                                        borderColor: 'var(--border-default)',
-                                        color: 'var(--text-primary)',
-                                    }}
+                                    leftIcon={<Search size={14} />}
                                 />
                             </div>
                             <div className="flex gap-2">
-                                <button
-                                    className="btn-press flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors hover:bg-grafite-800"
-                                    style={{ borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}
+                                <Button
+                                    variant="outline"
+                                    leftIcon={<Filter size={16} />}
                                 >
-                                    <Filter size={16} />
                                     Filtros Avançados
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
                         <DataTable
                             data={filtered}
-                            columns={columns}
+                            columns={columns as any}
                             pagination={{ page: 1, perPage: 10, total: filtered.length }}
                             emptyMessage="Nenhum log encontrado"
                         />
                     </div>
                 </FadeIn>
             </div>
-        </>
+        </PageTransition>
     )
 }

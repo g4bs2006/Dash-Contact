@@ -1,7 +1,8 @@
 import { useFilters } from '@/hooks/useFilters'
 import { MOCK_FILTER_OPTIONS } from '@/mocks/data'
-import { Filter, X, Calendar } from 'lucide-react'
+import { Filter, X, Calendar, Search } from 'lucide-react'
 import { FadeIn } from '@/components/ui/Animations'
+import { Input } from '@/components/ui/Input'
 
 export function GlobalFilters() {
     const {
@@ -10,11 +11,12 @@ export function GlobalFilters() {
         acao,
         dataInicio,
         dataFim,
+        search,
         setFilter,
         clearFilters,
     } = useFilters()
 
-    const activeCount = [clinica, unidade, acao, dataInicio, dataFim].filter(Boolean).length
+    const activeCount = [clinica, unidade, acao, dataInicio, dataFim, search].filter(Boolean).length
 
     // Cascading logic: filter units based on selected clinic
     const availableUnits = clinica
@@ -35,10 +37,10 @@ export function GlobalFilters() {
             >
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <Filter size={18} className="text-roxo-400" />
+                        <Filter size={18} className="text-coral-400" />
                         <h3 className="font-medium" style={{ color: 'var(--text-primary)' }}>Filtros</h3>
                         {activeCount > 0 && (
-                            <span className="rounded-full bg-roxo-500/10 px-2 py-0.5 text-xs font-bold text-roxo-400">
+                            <span className="rounded-full bg-coral-500/10 px-2 py-0.5 text-xs font-bold text-coral-400">
                                 {activeCount}
                             </span>
                         )}
@@ -56,6 +58,16 @@ export function GlobalFilters() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    {/* Search */}
+                    <div className="lg:col-span-4">
+                        <Input
+                            placeholder="Buscar paciente, clínica ou detalhes..."
+                            value={search || ''}
+                            onChange={(e) => setFilter('search', e.target.value || null)}
+                            leftIcon={<Search size={14} />}
+                        />
+                    </div>
+
                     {/* Clínica */}
                     <div className="space-y-1.5">
                         <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>Clínica</label>
@@ -65,7 +77,7 @@ export function GlobalFilters() {
                                 setFilter('clinica', e.target.value || null)
                                 setFilter('unidade', null) // Reset unit when clinic changes
                             }}
-                            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
+                            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-coral-500 focus:ring-1 focus:ring-coral-500/30"
                             style={inputStyle}
                         >
                             <option value="">Todas as clínicas</option>
@@ -82,7 +94,7 @@ export function GlobalFilters() {
                             value={unidade || ''}
                             onChange={(e) => setFilter('unidade', e.target.value || null)}
                             disabled={!clinica}
-                            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-coral-500 focus:ring-1 focus:ring-coral-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                             style={inputStyle}
                         >
                             <option value="">
@@ -100,7 +112,7 @@ export function GlobalFilters() {
                         <select
                             value={acao || ''}
                             onChange={(e) => setFilter('acao', e.target.value || null)}
-                            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
+                            className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-coral-500 focus:ring-1 focus:ring-coral-500/30"
                             style={inputStyle}
                         >
                             <option value="">Todas as ações</option>
@@ -111,18 +123,25 @@ export function GlobalFilters() {
                     </div>
 
                     {/* Período (Start Date) */}
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>A partir de</label>
-                        <div className="relative">
-                            <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-muted)' }} />
-                            <input
-                                type="date"
-                                value={dataInicio || ''}
-                                onChange={(e) => setFilter('dataInicio', e.target.value || null)}
-                                className="w-full rounded-lg border px-3 py-2 pl-9 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30" // added padding-left for icon
-                                style={inputStyle}
-                            />
-                        </div>
+                    <div>
+                        <Input
+                            label="A partir de"
+                            type="date"
+                            value={dataInicio || ''}
+                            onChange={(e) => setFilter('dataInicio', e.target.value || null)}
+                            leftIcon={<Calendar size={14} />}
+                        />
+                    </div>
+
+                    {/* Período (End Date) */}
+                    <div>
+                        <Input
+                            label="Até"
+                            type="date"
+                            value={dataFim || ''}
+                            onChange={(e) => setFilter('dataFim', e.target.value || null)}
+                            leftIcon={<Calendar size={14} />}
+                        />
                     </div>
                 </div>
             </div>

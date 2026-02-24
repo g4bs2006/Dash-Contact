@@ -7,6 +7,8 @@ import { Eye, EyeOff, LogIn, BarChart3, Shield, Zap } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { APP_NAME } from '@/utils/constants'
 import { FadeIn } from '@/components/ui/Animations'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 
 const loginSchema = z.object({
     email: z.string().email('E-mail inválido'),
@@ -46,19 +48,20 @@ export function LoginPage() {
                 {/* Background layers */}
                 <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, #1e0a3a 0%, #0a0a0f 50%, #1a0a1a 100%)' }} />
                 <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-roxo-400) 1px, transparent 0)`,
+                    backgroundImage: `radial-gradient(circle at 1px 1px, var(--color-coral-400) 1px, transparent 0)`,
                     backgroundSize: '32px 32px',
+                    opacity: 0.1,
                 }} />
 
                 {/* Glow orbs — brand gradient split */}
-                <div className="absolute -left-32 top-1/4 h-80 w-80 rounded-full bg-roxo-600/10 blur-[100px]" />
+                <div className="absolute -left-32 top-1/4 h-80 w-80 rounded-full bg-coral-600/10 blur-[100px]" />
                 <div className="absolute bottom-1/4 right-0 h-64 w-64 rounded-full blur-[80px]" style={{ background: 'rgba(194, 24, 91, 0.06)' }} />
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-1 flex-col justify-center px-16">
                     <FadeIn>
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-lg font-bold text-white shadow-glow-roxo" style={{ background: 'var(--gradient-brand)' }}>
-                            C
+                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl text-lg font-bold text-[var(--color-surface)] shadow-glow" style={{ background: 'var(--gradient-brand)' }}>
+                            DC
                         </div>
                     </FadeIn>
 
@@ -82,8 +85,8 @@ export function LoginPage() {
                                 { icon: Shield, label: 'Auditoria completa', desc: 'Rastreabilidade de todas as ações' },
                             ].map((feat) => (
                                 <div key={feat.label} className="flex items-start gap-4">
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-roxo-600/10">
-                                        <feat.icon size={18} className="text-roxo-400" />
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-coral-600/10">
+                                        <feat.icon size={18} className="text-coral-400" />
                                     </div>
                                     <div>
                                         <p className="text-sm font-medium text-grafite-200">{feat.label}</p>
@@ -108,8 +111,8 @@ export function LoginPage() {
                 <FadeIn delayMs={150} className="w-full max-w-sm">
                     {/* Mobile-only logo */}
                     <div className="mb-8 text-center lg:hidden">
-                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-bold text-white shadow-glow-roxo" style={{ background: 'var(--gradient-brand)' }}>
-                            C
+                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-bold text-[var(--color-surface)] shadow-glow" style={{ background: 'var(--gradient-brand)' }}>
+                            DC
                         </div>
                         <h1 className="text-xl font-bold text-grafite-50">{APP_NAME}</h1>
                     </div>
@@ -129,69 +132,74 @@ export function LoginPage() {
                         )}
 
                         {/* Email */}
-                        <div>
-                            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-grafite-200">
-                                E-mail
-                            </label>
-                            <input
-                                id="email"
-                                type="email"
-                                autoComplete="email"
-                                placeholder="seu@email.com"
-                                className={`w-full rounded-lg border bg-grafite-800 px-4 py-2.5 text-sm text-grafite-100 placeholder-grafite-500 outline-none transition-colors focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30 ${errors.email ? 'border-danger-500' : 'border-grafite-700'
-                                    }`}
-                                {...register('email')}
-                            />
-                            {errors.email && (
-                                <p className="mt-1 text-xs text-danger-400">{errors.email.message}</p>
-                            )}
-                        </div>
+                        <Input
+                            id="email"
+                            type="email"
+                            label="E-mail"
+                            placeholder="seu@email.com"
+                            autoComplete="email"
+                            error={errors.email?.message}
+                            {...register('email')}
+                            className="bg-grafite-800"
+                        />
 
                         {/* Password */}
-                        <div>
-                            <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-grafite-200">
-                                Senha
-                            </label>
-                            <div className="relative">
-                                <input
-                                    id="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    autoComplete="current-password"
-                                    placeholder="••••••"
-                                    className={`w-full rounded-lg border bg-grafite-800 px-4 py-2.5 pr-10 text-sm text-grafite-100 placeholder-grafite-500 outline-none transition-colors focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30 ${errors.password ? 'border-danger-500' : 'border-grafite-700'
-                                        }`}
-                                    {...register('password')}
-                                />
+                        <Input
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            label="Senha"
+                            placeholder="••••••"
+                            autoComplete="current-password"
+                            error={errors.password?.message}
+                            {...register('password')}
+                            className="bg-grafite-800"
+                            rightIcon={
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-grafite-400 hover:text-grafite-200 transition-colors"
+                                    className="text-grafite-400 hover:text-grafite-200 transition-colors"
                                     tabIndex={-1}
                                     aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                                 >
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
-                            </div>
-                            {errors.password && (
-                                <p className="mt-1 text-xs text-danger-400">{errors.password.message}</p>
-                            )}
-                        </div>
+                            }
+                        />
 
                         {/* Submit */}
-                        <button
+                        <Button
                             type="submit"
-                            disabled={isSubmitting}
-                            className="btn-press flex w-full items-center justify-center gap-2 rounded-lg bg-roxo-600 py-2.5 text-sm font-semibold text-white shadow-glow-roxo transition-all hover:bg-roxo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            isLoading={isSubmitting}
+                            className="w-full bg-[var(--color-coral-500)] hover:bg-[var(--color-coral-400)] text-[var(--color-surface)] shadow-glow"
+                            leftIcon={<LogIn size={16} />}
                         >
-                            {isSubmitting ? (
-                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                            ) : (
-                                <>
-                                    <LogIn size={16} />
-                                    Entrar
-                                </>
-                            )}
-                        </button>
+                            Entrar
+                        </Button>
+
+                        <div className="relative flex items-center py-2">
+                            <div className="flex-grow border-t border-grafite-800"></div>
+                            <span className="shrink-0 px-4 text-xs text-grafite-500">ou Teste Rápido</span>
+                            <div className="flex-grow border-t border-grafite-800"></div>
+                        </div>
+
+                        {/* Admin Test Hook */}
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full border-metal-500/30 text-metal-300 hover:bg-metal-500/10 transition-colors"
+                            onClick={async () => {
+                                try {
+                                    setError(null)
+                                    await login('admin@contactia.com', '123456')
+                                    navigate('/dashboard', { replace: true })
+                                } catch {
+                                    setError('Erro ao entrar como admin de teste.')
+                                }
+                            }}
+                        >
+                            <Shield size={16} className="mr-2" />
+                            Entrar como Administrador
+                        </Button>
                     </form>
 
                     {/* Mobile footer */}

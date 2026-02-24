@@ -1,15 +1,15 @@
-import { Header } from '@/components/layout/Header'
 import { KPICard } from '@/components/charts/KPICard'
-import { StatusBadge } from '@/components/ui/StatusBadge'
 import { StaggeredList, FadeIn } from '@/components/ui/Animations'
 import { Database, Building2, Activity, TrendingUp } from 'lucide-react'
 import { MOCK_KPIS, MOCK_RECORDS } from '@/mocks/data'
-import { formatDateTime } from '@/utils/formatters'
 import { useAuth } from '@/hooks/useAuth'
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
     CartesianGrid, Cell,
 } from 'recharts'
+import { QuickActions } from '@/components/dashboard/QuickActions'
+import { ActivityFeed } from '@/components/dashboard/ActivityFeed'
+import { toast } from 'sonner'
 
 function getGreeting(): string {
     const hour = new Date().getHours()
@@ -34,10 +34,10 @@ const CHART_DATA = [
 ]
 
 const DISTRIBUTION_DATA = [
-    { name: 'Clínica Saúde Plena', value: 560, fill: '#8b5cf6' },
-    { name: 'OdontoVita', value: 311, fill: '#a78bfa' },
-    { name: 'Clínica Renovar', value: 224, fill: '#6d35c4' },
-    { name: 'Bem Estar', value: 150, fill: '#c4b5fd' },
+    { name: 'Clínica Saúde Plena', value: 560, fill: '#ff6b4a' },
+    { name: 'OdontoVita', value: 311, fill: '#ff8e75' },
+    { name: 'Clínica Renovar', value: 224, fill: '#c44026' },
+    { name: 'Bem Estar', value: 150, fill: '#ffd4cc' },
 ]
 
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
@@ -51,169 +51,169 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
                 color: 'var(--text-primary)',
             }}
         >
-            <p className="font-medium">{label}</p>
-            <p className="text-roxo-400">{payload[0].value} registros</p>
+            <p className="font-medium text-white">{label}</p>
+            <p className="text-coral-400">{payload?.[0]?.value} registros</p>
         </div>
     )
 }
 
 export function DashboardPage() {
     const { user } = useAuth()
-    const recentRecords = MOCK_RECORDS.slice(0, 5)
     const firstName = user?.name?.split(' ')[0] ?? ''
 
-    return (
-        <>
-            <Header title="Dashboard" subtitle="Visão geral do sistema" />
+    const handleAction = (action: string) => {
+        toast.info(`Ação rápida: ${action}`)
+    }
 
-            <div className="space-y-6 p-6">
-                {/* Greeting */}
+    // Adapt records to activities
+    const activities = MOCK_RECORDS.slice(0, 10).map(r => ({
+        id: r.id,
+        action: r.acao || 'Desconhecido',
+        description: `${r.nome_paciente} - ${r.clinica}`,
+        timestamp: r.created_at,
+        status: r.status || undefined
+    }))
+
+    return (
+        <div className="w-full animation-fade-in relative z-10">
+            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between mb-8">
                 <FadeIn>
                     <div>
                         <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                            {getGreeting()}, <span className="text-gradient">{firstName}</span> 👋
+                            {getGreeting()}, <span className="text-gradient">{firstName}</span>
                         </h2>
                         <p className="mt-0.5 text-sm" style={{ color: 'var(--text-muted)' }}>
-                            Aqui está o resumo do seu sistema hoje.
+                            Visão geral da sua operação hoje.
                         </p>
                     </div>
                 </FadeIn>
-
-                {/* KPI Grid */}
-                <StaggeredList delayMs={80} className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    {[
-                        { title: 'Total de Registros', value: MOCK_KPIS.total_registros, icon: Database, variation: MOCK_KPIS.variacao_percentual },
-                        { title: 'Clínicas Ativas', value: MOCK_KPIS.clinicas_ativas, icon: Building2, variation: 8.3 },
-                        { title: 'Ações no Período', value: MOCK_KPIS.acoes_periodo, icon: Activity, variation: -3.2 },
-                        { title: 'Taxa de Confirmação', value: 87, icon: TrendingUp, variation: 5.1, format: 'raw' as const },
-                    ].map((kpi) => (
-                        <KPICard key={kpi.title} {...kpi} />
-                    ))}
-                </StaggeredList>
-
-                {/* Charts */}
-                <FadeIn delayMs={350}>
-                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                        {/* Bar chart — Recharts */}
-                        <div
-                            className="card-lift rounded-xl border p-5"
-                            style={{
-                                background: 'var(--surface-primary)',
-                                borderColor: 'var(--border-default)',
-                            }}
-                        >
-                            <h3 className="mb-4 text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                                Registros por Período
-                            </h3>
-                            <ResponsiveContainer width="100%" height={200}>
-                                <BarChart data={CHART_DATA} barSize={20}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-                                    <XAxis
-                                        dataKey="name"
-                                        tick={{ fontSize: 10, fill: 'var(--text-faint)' }}
-                                        axisLine={false}
-                                        tickLine={false}
-                                    />
-                                    <YAxis
-                                        tick={{ fontSize: 10, fill: 'var(--text-faint)' }}
-                                        axisLine={false}
-                                        tickLine={false}
-                                        width={30}
-                                    />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(139, 92, 246, 0.08)' }} />
-                                    <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                                        {CHART_DATA.map((_, i) => {
-                                            const shades = ['#6d35c4', '#8b5cf6', '#a78bfa', '#5425a0']
-                                            return <Cell key={i} fill={shades[i % shades.length]} />
-                                        })}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-
-                        {/* Distribution — Horizontal bars */}
-                        <div
-                            className="card-lift rounded-xl border p-5"
-                            style={{
-                                background: 'var(--surface-primary)',
-                                borderColor: 'var(--border-default)',
-                            }}
-                        >
-                            <h3 className="mb-4 text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                                Distribuição por Clínica
-                            </h3>
-                            <ResponsiveContainer width="100%" height={200}>
-                                <BarChart data={DISTRIBUTION_DATA} layout="vertical" barSize={16}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" horizontal={false} />
-                                    <XAxis
-                                        type="number"
-                                        tick={{ fontSize: 10, fill: 'var(--text-faint)' }}
-                                        axisLine={false}
-                                        tickLine={false}
-                                    />
-                                    <YAxis
-                                        type="category"
-                                        dataKey="name"
-                                        tick={{ fontSize: 11, fill: 'var(--text-muted)' }}
-                                        axisLine={false}
-                                        tickLine={false}
-                                        width={100}
-                                    />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(139, 92, 246, 0.08)' }} />
-                                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                                        {DISTRIBUTION_DATA.map((entry, i) => (
-                                            <Cell key={i} fill={entry.fill} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                </FadeIn>
-
-                {/* Recent records */}
-                <FadeIn delayMs={500}>
-                    <div
-                        className="rounded-xl border"
-                        style={{
-                            background: 'var(--surface-primary)',
-                            borderColor: 'var(--border-default)',
-                        }}
-                    >
-                        <div
-                            className="flex items-center justify-between px-5 py-4"
-                            style={{ borderBottom: '1px solid var(--border-default)' }}
-                        >
-                            <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>Registros Recentes</h3>
-                            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Últimos 5</span>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)' }}>
-                                        <th className="px-5 py-3">Paciente</th>
-                                        <th className="px-5 py-3">Clínica</th>
-                                        <th className="px-5 py-3">Ação</th>
-                                        <th className="px-5 py-3">Status</th>
-                                        <th className="px-5 py-3">Data</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {recentRecords.map((r) => (
-                                        <tr key={r.id} className="row-active" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                                            <td className="px-5 py-3 font-medium" style={{ color: 'var(--text-primary)' }}>{r.nome_paciente}</td>
-                                            <td className="px-5 py-3" style={{ color: 'var(--text-muted)' }}>{r.clinica}</td>
-                                            <td className="px-5 py-3" style={{ color: 'var(--text-muted)' }}>{r.acao}</td>
-                                            <td className="px-5 py-3"><StatusBadge status={r.sttus} /></td>
-                                            <td className="px-5 py-3" style={{ color: 'var(--text-faint)' }}>{formatDateTime(r.created_at)}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <FadeIn delayMs={100}>
+                    <QuickActions onAction={handleAction} />
                 </FadeIn>
             </div>
-        </>
+
+            <div className="grid grid-cols-12 gap-6">
+                {/* Left Column: KPIs and Charts */}
+                <div className="col-span-12 lg:col-span-8 space-y-6">
+                    {/* KPI Grid */}
+                    <StaggeredList delayMs={150} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        {[
+                            { title: 'Total de Registros', value: MOCK_KPIS.total_registros, icon: Database, variation: MOCK_KPIS.variacao_percentual },
+                            { title: 'Clínicas Ativas', value: MOCK_KPIS.clinicas_ativas, icon: Building2, variation: 8.3 },
+                            { title: 'Ações no Período', value: MOCK_KPIS.acoes_periodo, icon: Activity, variation: -3.2 },
+                            { title: 'Taxa de Confirmação', value: 87, icon: TrendingUp, variation: 5.1, format: 'raw' as const },
+                        ].map((kpi) => (
+                            <KPICard key={kpi.title} {...kpi} />
+                        ))}
+                    </StaggeredList>
+
+                    {/* Charts */}
+                    <FadeIn delayMs={300}>
+                        <div className="grid grid-cols-1 gap-4">
+                            {/* Bar chart — Recharts */}
+                            <div
+                                className="rounded-xl border p-5"
+                                style={{
+                                    background: 'var(--surface-primary)',
+                                    borderColor: 'var(--border-default)',
+                                }}
+                            >
+                                <h3 className="mb-4 text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                                    Volume de Registros
+                                </h3>
+                                <ResponsiveContainer width="100%" height={250}>
+                                    <BarChart data={CHART_DATA} barSize={24}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                                        <XAxis
+                                            dataKey="name"
+                                            tick={{ fontSize: 10, fill: 'var(--text-faint)' }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                        />
+                                        <YAxis
+                                            tick={{ fontSize: 10, fill: 'var(--text-faint)' }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                            width={30}
+                                        />
+                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255, 107, 74, 0.08)' }} />
+                                        <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                                            {CHART_DATA.map((_, i) => {
+                                                const shades = ['#c44026', '#ff6b4a', '#ff8e75', '#9e321e']
+                                                return <Cell key={i} fill={shades[i % shades.length]} />
+                                            })}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+
+                            {/* Distribution — Horizontal bars */}
+                            <div
+                                className="rounded-xl border p-5"
+                                style={{
+                                    background: 'var(--surface-primary)',
+                                    borderColor: 'var(--border-default)',
+                                }}
+                            >
+                                <h3 className="mb-4 text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                                    Distribuição por Clínica
+                                </h3>
+                                <ResponsiveContainer width="100%" height={200}>
+                                    <BarChart data={DISTRIBUTION_DATA} layout="vertical" barSize={20}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" horizontal={false} />
+                                        <XAxis
+                                            type="number"
+                                            tick={{ fontSize: 10, fill: 'var(--text-faint)' }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                        />
+                                        <YAxis
+                                            type="category"
+                                            dataKey="name"
+                                            tick={{ fontSize: 11, fill: 'var(--text-muted)' }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                            width={120}
+                                        />
+                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255, 107, 74, 0.08)' }} />
+                                        <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                                            {DISTRIBUTION_DATA.map((entry, i) => (
+                                                <Cell key={i} fill={entry.fill} />
+                                            ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </FadeIn>
+                </div>
+
+                {/* Right Column: Activity Feed */}
+                <div className="col-span-12 lg:col-span-4">
+                    <FadeIn delayMs={400} className="h-full">
+                        <div
+                            className="h-full rounded-xl border p-5"
+                            style={{
+                                background: 'var(--surface-raised)',
+                                borderColor: 'var(--border-default)',
+                            }}
+                        >
+                            <h3 className="mb-6 text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
+                                <Activity size={16} />
+                                Atividade Recente
+                            </h3>
+
+                            <ActivityFeed activities={activities} />
+
+                            <div className="mt-6 pt-6 border-t border-border-default text-center">
+                                <button className="text-xs font-bold tracking-wider uppercase text-coral-400 hover:text-coral-300 transition-colors">
+                                    Ver todas as atividades
+                                </button>
+                            </div>
+                        </div>
+                    </FadeIn>
+                </div>
+            </div>
+        </div>
     )
 }

@@ -8,12 +8,8 @@ import { MainLayout } from '@/components/layout/MainLayout'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { ClientListPage } from '@/pages/clients/ClientListPage'
-import { ClientDetailPage } from '@/pages/clients/ClientDetailPage'
-import { ClientFormPage } from '@/pages/clients/ClientFormPage'
 import { UserListPage } from '@/pages/users/UserListPage'
-import { UserFormPage } from '@/pages/users/UserFormPage'
 import { RecordListPage } from '@/pages/records/RecordListPage'
-import { RecordDetailPage } from '@/pages/records/RecordDetailPage'
 import { ReportsPage } from '@/pages/reports/ReportsPage'
 import { AuditPage } from '@/pages/audit/AuditPage'
 
@@ -31,17 +27,12 @@ export function App() {
                             <Route element={<MainLayout />}>
                                 <Route path="/dashboard" element={<DashboardPage />} />
                                 <Route path="/records" element={<RecordListPage />} />
-                                <Route path="/records/:id" element={<RecordDetailPage />} />
                                 <Route path="/reports" element={<ReportsPage />} />
 
                                 {/* Admin only */}
                                 <Route element={<AdminRoute />}>
                                     <Route path="/clients" element={<ClientListPage />} />
-                                    <Route path="/clients/new" element={<ClientFormPage />} />
-                                    <Route path="/clients/:id" element={<ClientDetailPage />} />
-                                    <Route path="/clients/:id/edit" element={<ClientFormPage />} />
                                     <Route path="/users" element={<UserListPage />} />
-                                    <Route path="/users/new" element={<UserFormPage />} />
                                     <Route path="/audit" element={<AuditPage />} />
                                 </Route>
                             </Route>

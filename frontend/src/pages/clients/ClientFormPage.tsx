@@ -1,13 +1,16 @@
-import { Header } from '@/components/layout/Header'
+import { PageTitle } from '@/components/layout/PageTitle'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
-import { Save, ArrowLeft, Loader2 } from 'lucide-react'
+import { Save, ArrowLeft } from 'lucide-react'
 import { MOCK_CLIENTS } from '@/mocks/data'
 import { FadeIn } from '@/components/ui/Animations'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { cn } from '@/lib/utils'
 
 const clientSchema = z.object({
     clinica: z.string().min(1, 'Nome da clínica é obrigatório'),
@@ -20,8 +23,15 @@ const clientSchema = z.object({
 
 type ClientFormData = z.infer<typeof clientSchema>
 
-export function ClientFormPage() {
-    const { id } = useParams()
+interface ClientFormPageProps {
+    clientId?: string | null
+    onSuccess?: () => void
+    asPanel?: boolean
+}
+
+export function ClientFormPage({ clientId, onSuccess, asPanel }: ClientFormPageProps = {}) {
+    const params = useParams()
+    const id = clientId || params.id
     const isEditMode = !!id
     const navigate = useNavigate()
 
@@ -58,7 +68,12 @@ export function ClientFormPage() {
         await new Promise((resolve) => setTimeout(resolve, 1000))
         console.log('Dados salvos:', data)
         toast.success(isEditMode ? 'Cliente atualizado com sucesso!' : 'Cliente criado com sucesso!')
-        navigate('/clients')
+
+        if (onSuccess) {
+            onSuccess()
+        } else if (!asPanel) {
+            navigate('/clients')
+        }
     }
 
     const inputStyle = {
@@ -69,117 +84,117 @@ export function ClientFormPage() {
 
     const labelStyle = { color: 'var(--text-secondary)' }
 
+    const content = (
+        <FadeIn>
+            {!asPanel && (
+                <button
+                    onClick={() => navigate('/clients')}
+                    className="mb-6 flex items-center gap-2 text-sm font-medium transition-colors hover:text-coral-400"
+                    style={{ color: 'var(--text-muted)' }}
+                >
+                    <ArrowLeft size={16} />
+                    Voltar para lista
+                </button>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pb-8">
+                <div
+                    className={cn("rounded-xl border shadow-sm", asPanel ? "p-0 border-none shadow-none" : "p-6")}
+                    style={!asPanel ? { background: 'var(--surface-primary)', borderColor: 'var(--border-default)' } : {}}
+                >
+                    {!asPanel && <h3 className="mb-4 text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Dados Cadastrais</h3>}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="space-y-1.5">
+                            <Input
+                                label="Clínica *"
+                                placeholder="Ex: Clínica Saúde Plena"
+                                error={errors.clinica?.message}
+                                {...register('clinica')}
+                            />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Input
+                                label="Unidade *"
+                                placeholder="Ex: Matriz - Centro"
+                                error={errors.unidade?.message}
+                                {...register('unidade')}
+                            />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Input
+                                label="Responsável"
+                                placeholder="Nome do contato principal"
+                                {...register('responsavel')}
+                            />
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Input
+                                label="Telefone"
+                                placeholder="(00) 00000-0000"
+                                {...register('telefone')}
+                            />
+                        </div>
+
+                        <div className="sm:col-span-2 space-y-1.5">
+                            <Input
+                                label="Email"
+                                placeholder="contato@clinica.com"
+                                error={errors.email?.message}
+                                {...register('email')}
+                            />
+                        </div>
+
+                        <div className="sm:col-span-2 space-y-1.5">
+                            <label className="text-sm font-medium" style={labelStyle}>Observações</label>
+                            <textarea
+                                {...register('observacoes')}
+                                rows={3}
+                                className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-coral-500 focus:ring-1 focus:ring-coral-500/30"
+                                style={inputStyle}
+                                placeholder="Informações adicionais..."
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-6 border-t border-border-default mt-6">
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => onSuccess ? onSuccess() : navigate('/clients')}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        type="submit"
+                        isLoading={isSubmitting}
+                        leftIcon={<Save size={16} />}
+                    >
+                        {isEditMode ? 'Salvar Alterações' : 'Criar Cliente'}
+                    </Button>
+                </div>
+            </form>
+        </FadeIn>
+    )
+
+    if (asPanel) {
+        return content
+    }
+
     return (
         <>
-            <Header
-                title={isEditMode ? 'Editar Cliente' : 'Novo Cliente'}
-                subtitle={isEditMode ? 'Atualize os dados do cliente' : 'Cadastre um novo cliente no sistema'}
-            />
+            {!asPanel && (
+                <PageTitle
+                    title={isEditMode ? 'Editar Cliente' : 'Novo Cliente'}
+                    subtitle={isEditMode ? 'Atualize os dados do cliente' : 'Cadastre um novo cliente no sistema'}
+                />
+            )}
 
             <div className="mx-auto max-w-2xl p-6">
-                <FadeIn>
-                    <button
-                        onClick={() => navigate('/clients')}
-                        className="mb-6 flex items-center gap-2 text-sm font-medium transition-colors hover:text-roxo-400"
-                        style={{ color: 'var(--text-muted)' }}
-                    >
-                        <ArrowLeft size={16} />
-                        Voltar para lista
-                    </button>
-
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        <div
-                            className="rounded-xl border p-6 shadow-sm"
-                            style={{ background: 'var(--surface-primary)', borderColor: 'var(--border-default)' }}
-                        >
-                            <h3 className="mb-4 text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Dados Cadastrais</h3>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium" style={labelStyle}>Clínica *</label>
-                                    <input
-                                        {...register('clinica')}
-                                        className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                        style={inputStyle}
-                                        placeholder="Ex: Clínica Saúde Plena"
-                                    />
-                                    {errors.clinica && <p className="text-xs text-danger-400">{errors.clinica.message}</p>}
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium" style={labelStyle}>Unidade *</label>
-                                    <input
-                                        {...register('unidade')}
-                                        className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                        style={inputStyle}
-                                        placeholder="Ex: Matriz - Centro"
-                                    />
-                                    {errors.unidade && <p className="text-xs text-danger-400">{errors.unidade.message}</p>}
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium" style={labelStyle}>Responsável</label>
-                                    <input
-                                        {...register('responsavel')}
-                                        className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                        style={inputStyle}
-                                        placeholder="Nome do contato principal"
-                                    />
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="text-sm font-medium" style={labelStyle}>Telefone</label>
-                                    <input
-                                        {...register('telefone')}
-                                        className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                        style={inputStyle}
-                                        placeholder="(00) 00000-0000"
-                                    />
-                                </div>
-
-                                <div className="sm:col-span-2 space-y-1.5">
-                                    <label className="text-sm font-medium" style={labelStyle}>Email</label>
-                                    <input
-                                        {...register('email')}
-                                        className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                        style={inputStyle}
-                                        placeholder="contato@clinica.com"
-                                    />
-                                    {errors.email && <p className="text-xs text-danger-400">{errors.email.message}</p>}
-                                </div>
-
-                                <div className="sm:col-span-2 space-y-1.5">
-                                    <label className="text-sm font-medium" style={labelStyle}>Observações</label>
-                                    <textarea
-                                        {...register('observacoes')}
-                                        rows={3}
-                                        className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-roxo-500 focus:ring-1 focus:ring-roxo-500/30"
-                                        style={inputStyle}
-                                        placeholder="Informações adicionais..."
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3">
-                            <button
-                                type="button"
-                                onClick={() => navigate('/clients')}
-                                className="rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:bg-grafite-800"
-                                style={{ color: 'var(--text-secondary)' }}
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="flex items-center gap-2 rounded-lg bg-roxo-600 px-4 py-2 text-sm font-medium text-white shadow-glow-roxo transition-all hover:bg-roxo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                                {isEditMode ? 'Salvar Alterações' : 'Criar Cliente'}
-                            </button>
-                        </div>
-                    </form>
-                </FadeIn>
+                {content}
             </div>
         </>
     )

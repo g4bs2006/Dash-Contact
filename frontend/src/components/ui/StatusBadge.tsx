@@ -4,24 +4,24 @@ interface StatusBadgeProps {
 }
 
 const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
-    // Record statuses
-    'Concluído': { bg: 'rgba(34,197,94,0.1)', text: '#4ade80' },
-    'Confirmado': { bg: 'rgba(59,130,246,0.1)', text: '#60a5fa' },
-    'Pendente': { bg: 'rgba(245,158,11,0.1)', text: '#fbbf24' },
-    'Cancelado': { bg: 'rgba(239,68,68,0.1)', text: '#f87171' },
-    'Enviado': { bg: 'rgba(139,92,246,0.1)', text: '#a78bfa' },
+    // Record statuses (AdFile/Vibrant Style)
+    'Concluído': { bg: 'rgba(13, 211, 179, 0.1)', text: 'var(--color-success-500)' },
+    'Confirmado': { bg: 'rgba(59, 130, 246, 0.1)', text: 'var(--color-info-500)' },
+    'Pendente': { bg: 'rgba(245, 166, 35, 0.1)', text: 'var(--color-warning-500)' },
+    'Cancelado': { bg: 'rgba(239, 68, 68, 0.1)', text: 'var(--color-danger-500)' },
+    'Enviado': { bg: 'rgba(232, 42, 113, 0.15)', text: 'var(--color-metal-400)' },
 
     // Entity statuses
-    'ativo': { bg: 'rgba(34,197,94,0.1)', text: '#22c55e' },
-    'Ativo': { bg: 'rgba(34,197,94,0.1)', text: '#22c55e' },
-    'inativo': { bg: 'var(--surface-overlay)', text: 'var(--text-muted)' },
-    'Inativo': { bg: 'var(--surface-overlay)', text: 'var(--text-muted)' },
+    'ativo': { bg: 'rgba(13, 211, 179, 0.1)', text: 'var(--color-success-500)' },
+    'Ativo': { bg: 'rgba(13, 211, 179, 0.1)', text: 'var(--color-success-500)' },
+    'inativo': { bg: 'var(--surface-raised)', text: 'var(--text-muted)' },
+    'Inativo': { bg: 'var(--surface-raised)', text: 'var(--text-muted)' },
 
     // Role badges
-    'admin': { bg: 'rgba(139,92,246,0.1)', text: '#a78bfa' },
-    'Administrador': { bg: 'rgba(139,92,246,0.1)', text: '#a78bfa' },
-    'funcionario': { bg: 'var(--surface-overlay)', text: 'var(--text-muted)' },
-    'Funcionário': { bg: 'var(--surface-overlay)', text: 'var(--text-muted)' },
+    'admin': { bg: 'rgba(232, 42, 113, 0.1)', text: 'var(--color-metal-400)' },
+    'Administrador': { bg: 'rgba(232, 42, 113, 0.1)', text: 'var(--color-metal-400)' },
+    'funcionario': { bg: 'var(--surface-raised)', text: 'var(--text-muted)' },
+    'Funcionário': { bg: 'var(--surface-raised)', text: 'var(--text-muted)' },
 }
 
 const LABELS: Record<string, string> = {

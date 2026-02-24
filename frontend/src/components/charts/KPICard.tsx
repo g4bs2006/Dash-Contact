@@ -47,8 +47,8 @@ export function KPICard({ title, value, icon: Icon, variation, format = 'number'
             {/* Bottom gradient accent */}
             <div className={`absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r ${borderGradient}`} />
             <div className="flex items-start justify-between">
-                <div className="rounded-lg bg-roxo-600/10 p-2.5">
-                    <Icon size={20} className="text-roxo-400" />
+                <div className="rounded-lg bg-coral-600/10 p-2.5">
+                    <Icon size={20} className="text-coral-400" />
                 </div>
                 {variation !== undefined && TrendIcon && (
                     <div className={`flex items-center gap-1 text-xs font-medium ${trendColor}`}>

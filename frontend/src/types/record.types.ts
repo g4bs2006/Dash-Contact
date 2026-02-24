@@ -4,7 +4,7 @@ export interface Record {
     clinica: string | null
     unidade: string | null
     acao: string | null
-    sttus: string | null
+    status: string | null
     nome_paciente: string | null
     telefone_paciente: string | null
     detalhes: string | null

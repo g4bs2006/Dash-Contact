@@ -7,6 +7,7 @@ interface FilterState {
     acao: string | null
     dataInicio: string | null
     dataFim: string | null
+    search: string | null
     setFilter: (key: string, value: string | null) => void
     clearFilters: () => void
     toQueryParams: () => Record<string, string>
@@ -20,6 +21,7 @@ export const useFilters = create<FilterState>()(
             acao: null,
             dataInicio: null,
             dataFim: null,
+            search: null,
 
             setFilter: (key, value) => set({ [key]: value }),
 
@@ -30,6 +32,7 @@ export const useFilters = create<FilterState>()(
                     acao: null,
                     dataInicio: null,
                     dataFim: null,
+                    search: null,
                 }),
 
             toQueryParams: () => {
@@ -40,6 +43,7 @@ export const useFilters = create<FilterState>()(
                 if (state.acao) params.acao = state.acao
                 if (state.dataInicio) params.data_inicio = state.dataInicio
                 if (state.dataFim) params.data_fim = state.dataFim
+                if (state.search) params.search = state.search
                 return params
             },
         }),
