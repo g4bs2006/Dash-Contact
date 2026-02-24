@@ -98,10 +98,35 @@ export function DashboardPage() {
                     {/* KPI Grid */}
                     <StaggeredList delayMs={150} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         {[
-                            { title: 'Total de Registros', value: MOCK_KPIS.total_registros, icon: Database, variation: MOCK_KPIS.variacao_percentual },
-                            { title: 'Clínicas Ativas', value: MOCK_KPIS.clinicas_ativas, icon: Building2, variation: 8.3 },
-                            { title: 'Ações no Período', value: MOCK_KPIS.acoes_periodo, icon: Activity, variation: -3.2 },
-                            { title: 'Taxa de Confirmação', value: 87, icon: TrendingUp, variation: 5.1, format: 'raw' as const },
+                            {
+                                title: 'Total de Registros',
+                                value: MOCK_KPIS.total_registros,
+                                icon: Database,
+                                variation: MOCK_KPIS.variacao_percentual,
+                                details: { previousWeek: 3120, max: 5000, monthlyAvg: 3450 }
+                            },
+                            {
+                                title: 'Clínicas Ativas',
+                                value: MOCK_KPIS.clinicas_ativas,
+                                icon: Building2,
+                                variation: 8.3,
+                                details: { previousWeek: 40, max: 100 }
+                            },
+                            {
+                                title: 'Ações no Período',
+                                value: MOCK_KPIS.acoes_periodo,
+                                icon: Activity,
+                                variation: -3.2,
+                                details: { monthlyAvg: 1100, previousWeek: 950 }
+                            },
+                            {
+                                title: 'Taxa de Confirmação',
+                                value: 87,
+                                icon: TrendingUp,
+                                variation: 5.1,
+                                format: 'raw' as const,
+                                details: { max: 100, previousWeek: 82 }
+                            },
                         ].map((kpi) => (
                             <KPICard key={kpi.title} {...kpi} />
                         ))}

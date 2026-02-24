@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Save, ArrowLeft, Shield, User } from 'lucide-react'
 import { FadeIn } from '@/components/ui/Animations'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { cn } from '@/lib/utils'
@@ -30,32 +30,28 @@ export function UserFormPage({ userId, onSuccess, asPanel }: UserFormPageProps =
     const navigate = useNavigate()
     const [passwordStrength, setPasswordStrength] = useState(0)
 
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors, isSubmitting },
-    } = useForm<UserFormData>({
+    // Use watch sparingly to prevent full renders
+    const { watch, register, handleSubmit, formState: { errors, isSubmitting } } = useForm<UserFormData>({
         resolver: zodResolver(userSchema),
-        defaultValues: {
-            role: 'funcionario',
-        },
+        defaultValues: { role: 'funcionario' }
     })
 
-    // Watch password for strength meter
-    const password = watch('password')
+    // Performance fix: Custom change handler instead of watch('password')
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value
+        let score = 0
+        if (val.length > 5) score += 1
+        if (val.length > 8) score += 1
+        if (/[A-Z]/.test(val)) score += 1
+        if (/[0-9]/.test(val)) score += 1
 
-    useEffect(() => {
-        if (password !== undefined) {
-            // Simple strength calc
-            let score = 0
-            if (password.length > 5) score += 1
-            if (password.length > 8) score += 1
-            if (/[A-Z]/.test(password)) score += 1
-            if (/[0-9]/.test(password)) score += 1
+        // Debounced or direct state set prevents whole form re-render
+        if (score !== passwordStrength) {
             setPasswordStrength(score)
         }
-    }, [password])
+    }
+
+    const { onChange: formHookOnChange, ...passwordRegisterRest } = register('password')
 
     const onSubmit = async (data: UserFormData) => {
         // Mock API call
@@ -114,10 +110,14 @@ export function UserFormPage({ userId, onSuccess, asPanel }: UserFormPageProps =
                                 label="Senha *"
                                 placeholder="Mínimo 6 caracteres"
                                 error={errors.password?.message}
-                                {...register('password')}
+                                {...passwordRegisterRest}
+                                onChange={(e) => {
+                                    formHookOnChange(e)
+                                    handlePasswordChange(e)
+                                }}
                             />
                             {/* Password Strength Meter */}
-                            {password && (
+                            {passwordStrength > 0 && (
                                 <div className="mt-2 flex gap-1 h-1">
                                     {[1, 2, 3, 4].map((i) => (
                                         <div
